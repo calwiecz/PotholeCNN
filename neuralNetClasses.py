@@ -11,7 +11,7 @@ class Neuron:
 	alpha = 0.01
 	eta = 0.001
 
-	def __init_(self, layer):
+	def __init__(self, layer):
 		self.output = 0.
 		self.error = 0.
 		self.gradient = 0.
