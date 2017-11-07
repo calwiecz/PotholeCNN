@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
 
-file = 'C:/Users/calwi/OneDrive/Documents/School/Fall17/ECE570_AI/Project/cifar-10-batches-py/data_batch_1'
+file = 'C:/Users/Jesse/Desktop/cifar-10-batches-py/data_batch_1'
 
 #10,000 images in databatch1
 def unpickle(file):
@@ -72,7 +72,7 @@ W3 = 0.01 * np.random.randn(h,K)
 b3 = np.zeros((1,K))
 
 #step_size = 1e-0
-step_size = 10
+step_size = 5
 reg = 1e-3 # regularization strength
 
 print(X.shape)
