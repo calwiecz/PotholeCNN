@@ -4,7 +4,7 @@ import matplotlib.image as mpimg
 
 
 file = 'C:/Users/calwi/OneDrive/Documents/School/Fall17/ECE570_AI/Project/cifar-10-batches-py/data_batch_1'
-
+testfile = 'C:/Users/calwi/OneDrive/Documents/School/Fall17/ECE570_AI/Project/cifar-10-batches-py/test_batch'
 #10,000 images in databatch1
 def unpickle(file):
     import pickle
@@ -13,39 +13,36 @@ def unpickle(file):
     return imgs
 
 imgs = unpickle(file)
+test_imgs = unpickle(testfile)
+klt,vlt = list(test_imgs.items())[1]
+kdt,vdt = list(test_imgs.items())[2]
+Xt = vdt #(10000, 3072) pixel values (1 row is 1024 R G B for 1 image)
+yt = vlt
+#convert back to np arrays
+Xt = Xt.astype('float64')
+Xt = np.asarray(Xt)
+print(Xt)
+Xt -= np.mean(Xt, axis = 0)
+cov = np.dot(Xt.T,Xt) / Xt.shape[0]
+Ut,St,Vt = np.linalg.svd(cov)
+Xrott = np.dot(Xt, Ut)
+Xt = Xrott / np.sqrt(St + 1e-4) #whitening
+print(Xt)
+yt = np.asarray(yt)
+
+
+N = 10000
+D = 3072
+K = 10
 
 #keys and values for data
 kl,vl = list(imgs.items())[1]
 kd,vd = list(imgs.items())[2]
 kn,vn = list(imgs.items())[3]
-print('--')
-print(vd[0]) #data for each Input
-print(vl[0]) #Label for each Input
-print(vn[0]) #Filename for each Input
+
 #pic = mpimg.imread(vn[0])
 #picShow = plt.imshow(pic)
 
-'''
-np.random.seed(0)
-N = 100 # number of points per class
-D = 2 # dimensionality
-K = 3 # number of classes
-X = np.zeros((N*K,D))
-y = np.zeros(N*K, dtype='uint8')
-for j in range(K):
-  ix = range(N*j,N*(j+1))
-  r = np.linspace(0.0,1,N) # radius
-  t = np.linspace(j*4,(j+1)*4,N) + np.random.randn(N)*0.2 # theta
-  X[ix] = np.c_[r*np.sin(t), r*np.cos(t)]
-  y[ix] = j
-fig = plt.figure()
-plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap=plt.cm.Spectral)
-plt.xlim([-1,1])
-plt.ylim([-1,1])
-'''
-N = 10000
-D = 3072
-K = 10
 X = vd #(10000, 3072) pixel values (1 row is 1024 R G B for 1 image)
 y = vl
 #convert back to np arrays
@@ -72,7 +69,7 @@ W3 = 0.01 * np.random.randn(h,K)
 b3 = np.zeros((1,K))
 
 #step_size = 1e-0
-step_size = 10
+step_size = 5
 reg = 1e-3 # regularization strength
 
 print(X.shape)
@@ -81,7 +78,7 @@ print(y.shape)
 # gradient descent loop
 num_examples = X.shape[0]
 print(num_examples)
-for i in range(1000):
+for i in range(2000):
     # evaluate class scores with a 3-layer Neural Network
     
     hidden_layer1 = np.maximum(0,np.dot(X,W)+b) #ReLU activation
@@ -140,9 +137,20 @@ print(np.shape(scores))
 print(scores)
 predicted_class = np.argmax(scores, axis=1)
 print(predicted_class)
+print(y)
 print(np.shape(predicted_class))
 print ('training accuracy: %.2f' % (np.mean(predicted_class == y)))
 
-
+#Testing with outside data
+hidden_layer1t = np.maximum(0, np.dot(Xt, W) + b)
+hidden_layer2t = np.maximum(0,np.dot(hidden_layer1t, W2)+b2)
+scorest = np.dot(hidden_layer2t, W3) + b3
+print(np.shape(scorest))
+print(scorest)
+predicted_classt = np.argmax(scorest, axis=1)
+print(predicted_classt)
+print(yt)
+print(np.shape(predicted_classt))
+print ('training accuracy: %.2f' % (np.mean(predicted_classt == yt)))
 
 
