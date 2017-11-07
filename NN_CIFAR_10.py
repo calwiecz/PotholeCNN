@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+
 file = 'C:/Users/calwi/OneDrive/Documents/School/Fall17/ECE570_AI/Project/cifar-10-batches-py/data_batch_1'
 
 #10,000 images in databatch1
@@ -48,7 +49,14 @@ K = 10
 X = vd #(10000, 3072) pixel values (1 row is 1024 R G B for 1 image)
 y = vl
 #convert back to np arrays
-X = (np.asarray(X) - 127)/255
+X = X.astype('float64')
+X = np.asarray(X)
+print(X)
+X -= np.mean(X, axis = 0)
+cov = np.dot(X.T,X) / X.shape[0]
+U,S,V = np.linalg.svd(cov)
+Xrot = np.dot(X, U)
+X = Xrot / np.sqrt(S + 1e-4) #whitening
 print(X)
 y = np.asarray(y)
 
@@ -63,7 +71,8 @@ b2 = np.zeros((1,h))
 W3 = 0.01 * np.random.randn(h,K)
 b3 = np.zeros((1,K))
 
-step_size = 1e-0
+#step_size = 1e-0
+step_size = 10
 reg = 1e-3 # regularization strength
 
 print(X.shape)
@@ -72,14 +81,14 @@ print(y.shape)
 # gradient descent loop
 num_examples = X.shape[0]
 print(num_examples)
-for i in range(500):
+for i in range(1000):
     # evaluate class scores with a 3-layer Neural Network
     
     hidden_layer1 = np.maximum(0,np.dot(X,W)+b) #ReLU activation
     hidden_layer2 = np.maximum(0,np.dot(hidden_layer1, W2)+b2)
     scores = np.dot(hidden_layer2, W3) + b3
  
-    exp_scores = np.exp(scores)
+    exp_scores = np.exp(scores - np.max(scores))
     probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
     #Loss: Average cross-entropy & Reg
     correct_logprobs = -np.log(probs[range(num_examples), y])
