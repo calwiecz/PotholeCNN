@@ -1,19 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import os
 
+cifar_train_1 = '../cifar-10-batches-py/data_batch_1'
+cifar_test = '../cifar-10-batches-py/test_batch'
 
-file = 'C:/Users/calwi/OneDrive/Documents/School/Fall17/ECE570_AI/Project/cifar-10-batches-py/data_batch_1'
-testfile = 'C:/Users/calwi/OneDrive/Documents/School/Fall17/ECE570_AI/Project/cifar-10-batches-py/test_batch'
-#10,000 images in databatch1
-def unpickle(file):
+def unpickle(cifar_train_1):
     import pickle
-    with open(file, 'rb') as fo:
+    with open(cifar_train_1, 'rb') as fo:
         imgs = pickle.load(fo, encoding='bytes')
     return imgs
 
-imgs = unpickle(file)
-test_imgs = unpickle(testfile)
+imgs = unpickle(cifar_train_1)
+test_imgs = unpickle(cifar_test)
 klt,vlt = list(test_imgs.items())[1]
 kdt,vdt = list(test_imgs.items())[2]
 Xt = vdt #(10000, 3072) pixel values (1 row is 1024 R G B for 1 image)
