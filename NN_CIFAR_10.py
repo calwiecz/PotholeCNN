@@ -60,17 +60,20 @@ y = np.asarray(y)
 #NN Code with 1 hidden layer
 
 #init para
-h = 200
-W = 0.01 * np.random.randn(D,h)
-b = np.zeros((1,h))
-W2 = 0.01 * np.random.randn(h,h)
-b2 = np.zeros((1,h))
-W3 = 0.01 * np.random.randn(h,K)
+h1 = 100
+h2 = 50
+W = 0.01 * np.random.randn(D,h1)
+b = np.zeros((1,h1))
+W2 = 0.01 * np.random.randn(h1,h2)
+b2 = np.zeros((1,h2))
+W3 = 0.01 * np.random.randn(h2,K)
 b3 = np.zeros((1,K))
 
-#step_size = 1e-0
+iterations = 2000
 step_size = 5
-reg = 1e-3 # regularization strength
+reg = 1e-1 # regularization strength
+dreg = 5
+reg_int = 250
 
 print(X.shape)
 print(y.shape)
@@ -78,9 +81,10 @@ print(y.shape)
 # gradient descent loop
 num_examples = X.shape[0]
 print(num_examples)
-for i in range(2000):
+for i in range(iterations):
     # evaluate class scores with a 3-layer Neural Network
-    
+    if (i % 250 == 0) and (i != 0):
+        reg /= dreg
     hidden_layer1 = np.maximum(0,np.dot(X,W)+b) #ReLU activation
     hidden_layer2 = np.maximum(0,np.dot(hidden_layer1, W2)+b2)
     scores = np.dot(hidden_layer2, W3) + b3
