@@ -1,20 +1,69 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import os
+#import matplotlib.pyplot as plt
+#import matplotlib.image as mpimg
 
-
+'''
 cifar_train_1 = '../cifar-10-batches-py/data_batch_1'
+cifar_train_2 = '../cifar-10-batches-py/data_batch_2'
+cifar_train_3 = '../cifar-10-batches-py/data_batch_3'
+cifar_train_4 = '../cifar-10-batches-py/data_batch_4'
+cifar_train_5 = '../cifar-10-batches-py/data_batch_5'
 cifar_test = '../cifar-10-batches-py/test_batch'
+'''
 
-def unpickle(cifar_train_1):
+#pothole_train_p = np.load('../pothole/Train_data/pothole_data_pos.npy')
+#pothole_train_n = np.load('../pothole/Train_data/pothole_data_neg.npy')
+'''
+pothole_train_p_100 = np.load('../Python_Tut/pothole_data_pos_100.npy')
+pothole_train_n_100 = np.load('../Python_Tut/pothole_data_neg_100.npy')
+pothole_train_pt = np.load('../pothole/pothole_data_pos_test.npy')
+pothole_train_nt = np.load('../pothole/pothole_data_neg_test.npy')
+'''
+'''
+pothole_train_p_100 = np.load('../Python_Tut/pothole_data_pos_100_g.npy')
+pothole_train_pt = np.load('../Python_Tut/pothole_data_post_100_g.npy')
+pothole_train_n_100 = np.load('../Python_Tut/pothole_data_neg_100_g.npy')
+pothole_train_nt = np.load('../Python_Tut/pothole_data_negt_100_g.npy')
+'''
+pothole_train_p_500 = np.load('../Python_Tut/pothole_data_pos_500_g.npy')
+pothole_train_pt = np.load('../Python_Tut/pothole_data_post_500_g.npy')
+pothole_train_n_500 = np.load('../Python_Tut/pothole_data_neg_500_g.npy')
+pothole_train_nt = np.load('../Python_Tut/pothole_data_negt_500_g.npy')
+#remove first row of all pothole data
+#pothole_train_p = np.delete(pothole_train_p, (0), axis=0)
+#pothole_train_n = np.delete(pothole_train_n, (0), axis=0)
+#pothole_train_pt = np.delete(pothole_train_pt, (0), axis=0)
+#pothole_train_nt = np.delete(pothole_train_nt, (0), axis=0)
+
+#only 1000 rows of each data
+#pothole_train_p_100 = pothole_train_p_100[:10,:]
+#pothole_train_n_100 = pothole_train_n_100[:10,:]
+
+train_data = np.vstack((pothole_train_p_500,pothole_train_n_500))
+pothole_train_p_100 = None
+pothole_train_n_100 = None
+test_data = np.vstack((pothole_train_pt,pothole_train_nt))
+pothole_train_pt = None
+pothole_train_nt = None
+print(train_data.shape)
+print(test_data.shape)
+
+def unpickle(file):
     import pickle
-    with open(cifar_train_1, 'rb') as fo:
+    with open(file, 'rb') as fo:
         imgs = pickle.load(fo, encoding='bytes')
     return imgs
-
+'''
 imgs = unpickle(cifar_train_1)
+imgs1 = unpickle(cifar_train_1)
+imgs2 = unpickle(cifar_train_2)
+imgs3 = unpickle(cifar_train_3)
+imgs4 = unpickle(cifar_train_4)
+imgs5 = unpickle(cifar_train_5)
+#print(imgs)
 test_imgs = unpickle(cifar_test)
+'''
+'''
 klt,vlt = list(test_imgs.items())[1]
 kdt,vdt = list(test_imgs.items())[2]
 Xt = vdt #(10000, 3072) pixel values (1 row is 1024 R G B for 1 image)
@@ -30,38 +79,84 @@ Xrott = np.dot(Xt, Ut)
 Xt = Xrott / np.sqrt(St + 1e-4) #whitening
 #print(Xt)
 yt = np.asarray(yt)
-
-
-N = 10000
-D = 3072
-K = 10
+'''
+yt = np.array([1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0])
+o = list(np.zeros((500)))
+n = list(np.ones((500)))
+yt =np.array(n+o)
+yt = list(map(int, yt))
+yt = np.array(yt)
+Xt = test_data
+print(test_data.shape)
+N = 200
+D = 19200
+K = 2
 
 #keys and values for data
-kl,vl = list(imgs.items())[1]
-kd,vd = list(imgs.items())[2]
-kn,vn = list(imgs.items())[3]
+'''
+kl1,vl1 = list(imgs.items())[1]
+kd1,vd1 = list(imgs.items())[2]
+kn1,vn1 = list(imgs.items())[3]
 
+kl2, vl2 = list(imgs2.items())[1]
+kl3, vl3 = list(imgs3.items())[1]
+kl4, vl4 = list(imgs4.items())[1]
+kl5, vl5 = list(imgs5.items())[1]
+
+kd2, vd2 = list(imgs2.items())[2]
+kd3, vd3 = list(imgs3.items())[2]
+kd4, vd4 = list(imgs4.items())[2]
+kd5, vd5 = list(imgs5.items())[2]
+
+vl = vl1 + vl2 + vl3 + vl4 + vl5
+#vd = vd1 + vd2 + vd3 + vd4 + vd5
+vd1 = np.asarray(vd1)
+vd2 = np.asarray(vd2)
+vd3 = np.asarray(vd3)
+vd4 = np.asarray(vd4)
+vd5 = np.asarray(vd5)
+
+vd = np.vstack((vd1,vd2,vd3,vd4,vd5))
+#print(vl.shape)
+print(vd.shape)
 #pic = mpimg.imread(vn[0])
 #picShow = plt.imshow(pic)
+'''
+#X = vd #(10000, 3072) pixel values (1 row is 1024 R G B for 1 image)
+#y = vl
+print(train_data.shape)
 
-X = vd #(10000, 3072) pixel values (1 row is 1024 R G B for 1 image)
-y = vl
+X = train_data
+train_data = None
 #convert back to np arrays
 X = X.astype('float64')
 X = np.asarray(X)
-#print(X)
+print(X.shape)
 X -= np.mean(X, axis = 0)
+X /= 255
+'''
 cov = np.dot(X.T,X) / X.shape[0]
 U,S,V = np.linalg.svd(cov)
+cov = None
 Xrot = np.dot(X, U)
+U = None
 X = Xrot / np.sqrt(S + 1e-4) #whitening
+Xrot = None
+U,S,V = None, None, None
+'''
 #print(X)
-y = np.asarray(y)
-
+#y = np.asarray(y)
+o = list(np.zeros((500)))
+n = list(np.ones((500)))
+y =np.array(n+o)
+y = list(map(int, y))
+y = np.array(y)
+print(y)
+print(y.shape)
 #NN Code with 1 hidden layer
 
 #init para
-h1 = 10
+h1 = 60
 
 W = 0.01 * np.random.randn(D,h1)
 b = np.zeros((1,h1))
@@ -69,9 +164,9 @@ W2 = 0.01 * np.random.randn(h1,K)
 b2 = np.zeros((1,K))
 
 
-iterations = 1000
-step_size = 1
-reg = 1e-1 # regularization strength
+iterations = 2000
+step_size = 0.5
+reg = 1e-3 # regularization strength
 dreg = 2
 reg_int = 100
 
@@ -83,8 +178,8 @@ num_examples = X.shape[0]
 print(num_examples)
 for i in range(iterations):
     # evaluate class scores with a 3-layer Neural Network
-    if (i % reg_int == 0) and (i != 0):
-        reg /= dreg
+    #if (i % reg_int == 0) and (i != 0):
+    #    reg /= dreg
     hidden_layer1 = np.maximum(0,np.dot(X,W)+b) #ReLU activation
     scores = np.dot(hidden_layer1, W2) + b2
     
